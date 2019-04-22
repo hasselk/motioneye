@@ -3574,20 +3574,27 @@ function runPictureDialog(entries, pos, mediaType) {
 
             video_container.on('ended', function() {
                 if (vidspeed != 0) {
-                    nextArrow.click();
-                    playButton.click();
-                    motioneyePlayer.playbackRate = vidspeed;
+                    if (pos < entries.length - 1) {
+                        if( pos > 0 ) {
+                            nextArrow.click();
+                            playButton.click();
+                        }
+                        motioneyePlayer.playbackRate = vidspeed;    
+                    }
                 }
             });
 
             timelapseButton.on('click', function() {
-               timelapse = 1; 
+               timeLapse = 1; 
                playButton.click();
+               
                video_container.on('ended', function() {
-                  if( pos > 0 ) {
-                     nextArrow.click();
-                     playButton.click();
-                  }
+                    if (pos < entries.length - 1) {
+                        if( pos > 0 ) {
+                            nextArrow.click();
+                            playButton.click();
+                        }
+                    }
                });
             });
             playButton.on('click', function() {
@@ -3600,8 +3607,10 @@ function runPictureDialog(entries, pos, mediaType) {
                 video_container.on('canplay', function() {
                    video_container.get(0).play();  /* Automatically play the video once the browser is ready */
                 });
-                if( timelapse == 1 ) {
-                   document.getElementById('motioneyePlayer').playbackRate = 8;
+                if( timeLapse == 1 ) {
+                   //document.getElementById('motioneyePlayer').playbackRate = 8;
+                   vidspeed = 8;
+                   document.getElementById('motioneyePlayer').playbackRate = vidspeed;
                 };
             });
 
@@ -3686,8 +3695,8 @@ function runPictureDialog(entries, pos, mediaType) {
 
             case 33: /* PgUp */
                 if (vidspeed == 0)
-                    vidspeed = 1;
-                if(vidspeed < 32) {
+                    vidspeed = 0.1;
+                if(vidspeed <= 32) {
                     vidspeed = vidspeed * 2;
                     motioneyePlayer.playbackRate = vidspeed;
                 }
@@ -3730,6 +3739,7 @@ function runPictureDialog(entries, pos, mediaType) {
         onShow: updatePicture,
         onClose: function () {
             $('body').off('keydown', bodyKeyDown);
+            timelapse = 0; 
         }
     });
 }
