@@ -768,7 +768,8 @@ div.picture-dialog-content {
 div.picture-dialog-prev-arrow,
 div.picture-dialog-next-arrow,
 div.picture-dialog-play,
-div.picture-dialog-progress {
+div.picture-dialog-progress,
+div.picture-dialog-timelapse {
     position: absolute;
     top: 50%;
     margin-top: -1.5em;
@@ -789,6 +790,13 @@ div.picture-dialog-next-arrow {
 }
 
 div.picture-dialog-play {
+    background-image: url(../img/camera-top-buttons.svg);
+    background-position: -300% 0px;
+    left: 50%;
+    margin-left: -1.5em;
+}
+
+div.picture-dialog-timelapse {
     background-image: url(../img/camera-top-buttons.svg);
     background-position: -300% 0px;
     left: 50%;

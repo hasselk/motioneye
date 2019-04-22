@@ -3497,7 +3497,7 @@ function runPictureDialog(entries, pos, mediaType) {
     var img = $('<img class="picture-dialog-content">');
     content.append(img);
 
-    var video_container = $('<video class="picture-dialog-content" controls="true">');
+    var video_container = $('<video id="motionPlayer" class="picture-dialog-content" controls="true">');
     var video_loader = $('<img>');
     video_container.on('error', function(err) {
         var msg = '';
@@ -3528,6 +3528,9 @@ function runPictureDialog(entries, pos, mediaType) {
     var prevArrow = $('<div class="picture-dialog-prev-arrow button mouse-effect" title="previous picture"></div>');
     content.append(prevArrow);
 
+    var timelapseButton = $('<div class="picture-dialog-timelapse button mouse-effect" title="fast"></div>');
+    content.append(timelapseButton);
+
     var playButton = $('<div class="picture-dialog-play button mouse-effect" title="play"></div>');
     content.append(playButton);
 
@@ -3546,8 +3549,11 @@ function runPictureDialog(entries, pos, mediaType) {
         var width = parseInt(windowWidth * widthCoef);
         var height = parseInt(windowHeight * heightCoef);
         
+        var timeLapse = 0;
+
         prevArrow.css('display', 'none');
         nextArrow.css('display', 'none');
+        timelapseButton.hide();
 
         var playable = video_container.get(0).canPlayType(entry.mimeType) != ''
         playButton.hide();
@@ -3561,18 +3567,36 @@ function runPictureDialog(entries, pos, mediaType) {
 
         if (playable) {
             video_loader.attr('src', addAuthParams('GET', basePath + mediaType + '/' + entry.cameraId + '/playback' + entry.path));
+            timelapseButton.on('click', function() {
+               timelapse = 1; 
+               playButton.click();
+               video_container.on('ended', function() {
+                  if( pos > 0 ) {
+                     nextArrow.click();
+                     playButton.click();
+                  }
+               });
+            });
             playButton.on('click', function() {
                 video_container.attr('src', addAuthParams('GET', basePath + mediaType + '/' + entry.cameraId + '/playback' + entry.path));
                 video_container.show();
                 video_container.get(0).load();  /* Must call load() after changing <video> source */
                 img.hide();
                 playButton.hide();
+                timelapseButton.hide();
                 video_container.on('canplay', function() {
                    video_container.get(0).play();  /* Automatically play the video once the browser is ready */
                 });
+                if( timelapse == 1 ) {
+                   document.getElementById('motionPlayer').playbackRate = 4;
+                };
             });
 
             playButton.show();
+            timelapseButton.show();
+
+            playButton.css('left', '55%');
+            timelapseButton.css('left', '45%');
         }
 
         img.load(function () {
