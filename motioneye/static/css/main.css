@@ -769,7 +769,9 @@ div.picture-dialog-prev-arrow,
 div.picture-dialog-next-arrow,
 div.picture-dialog-play,
 div.picture-dialog-progress,
-div.picture-dialog-timelapse {
+div.picture-dialog-autoplayfast,
+div.picture-dialog-autoplay,
+div.picture-dialog-playbackspeed {
     position: absolute;
     top: 50%;
     margin-top: -1.5em;
@@ -796,11 +798,31 @@ div.picture-dialog-play {
     margin-left: -1.5em;
 }
 
-div.picture-dialog-timelapse {
-    background-image: url(../img/camera-top-buttons.svg);
+div.picture-dialog-autoplayfast {
+    background-image: url(../img/media_buttons.svg);
     background-position: -300% 0px;
-    left: 50%;
+    left: 40%;
     margin-left: -1.5em;
+}
+
+div.picture-dialog-playbackspeed {
+    background-image: url(../img/media_buttons.svg);
+    background-position: -400% 0px;
+    top: 20%;
+    right: 5%;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: -1.5em;
+}
+
+div.picture-dialog-autoplay {
+    background-image: url(../img/media_buttons.svg);
+    background-position: -200% 0px;
+    top: 15%;
+    right: 5%;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: -1.5em;
 }
 
 div.picture-dialog-prev-arrow {

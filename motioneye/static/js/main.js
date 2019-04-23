@@ -3532,8 +3532,14 @@ function runPictureDialog(entries, pos, mediaType) {
     var prevArrow = $('<div class="picture-dialog-prev-arrow button mouse-effect" title="previous picture"></div>');
     content.append(prevArrow);
 
-    var timelapseButton = $('<div class="picture-dialog-timelapse button mouse-effect" title="fast"></div>');
-    content.append(timelapseButton);
+    var autoplayfastButton = $('<div class="picture-dialog-autoplayfast button mouse-effect" title="fastAuto"></div>');
+    content.append(autoplayfastButton);
+
+    var playbackspeedButton = $('<div class="picture-dialog-playbackspeed button mouse-effect" title="speed"></div>');
+    content.append(playbackspeedButton);
+
+    var autoplayButton = $('<div class="picture-dialog-autoplay button mouse-effect" title="Autoplay"></div>');
+    content.append(autoplayButton);
 
     var playButton = $('<div class="picture-dialog-play button mouse-effect" title="play"></div>');
     content.append(playButton);
@@ -3553,11 +3559,14 @@ function runPictureDialog(entries, pos, mediaType) {
         var width = parseInt(windowWidth * widthCoef);
         var height = parseInt(windowHeight * heightCoef);
         
-        var timeLapse = 0;
+        var autoplay = 0;
 
         prevArrow.css('display', 'none');
         nextArrow.css('display', 'none');
-        timelapseButton.hide();
+
+        autoplayfastButton.hide();
+        playbackspeedButton.hide();
+        autoplayButton.hide();
 
         var playable = video_container.get(0).canPlayType(entry.mimeType) != ''
         playButton.hide();
@@ -3574,51 +3583,63 @@ function runPictureDialog(entries, pos, mediaType) {
 
             video_container.on('ended', function() {
                 if (vidspeed != 0) {
-                    if (pos < entries.length - 1) {
-                        if( pos > 0 ) {
-                            nextArrow.click();
-                            playButton.click();
-                        }
-                        motioneyePlayer.playbackRate = vidspeed;    
+                    motioneyePlayer.playbackRate = vidspeed;    
+                }
+                if (autoplay != 0) {
+                    if( pos > 0 ) {
+                        nextArrow.click();
+                        playButton.click();
                     }
                 }
             });
 
-            timelapseButton.on('click', function() {
-               timeLapse = 1; 
-               playButton.click();
+            autoplayfastButton.on('click', function() {
+                autoplay = 1;
+                vidspeed = 8;
+                playButton.click();
+                //autoplayfastButton.hide();
                
-               video_container.on('ended', function() {
-                    if (pos < entries.length - 1) {
-                        if( pos > 0 ) {
-                            nextArrow.click();
-                            playButton.click();
-                        }
+/*               video_container.on('ended', function() {
+                    if( pos > 0 ) {
+                        nextArrow.click();
+                        playButton.click();
                     }
                });
+*/
             });
             playButton.on('click', function() {
                 video_container.attr('src', addAuthParams('GET', basePath + mediaType + '/' + entry.cameraId + '/playback' + entry.path));
                 video_container.show();
                 video_container.get(0).load();  /* Must call load() after changing <video> source */
+
                 img.hide();
                 playButton.hide();
-                timelapseButton.hide();
+                autoplayfastButton.hide();
+
+                if (autoplay == 1){
+                    autoplayButton.show();
+                }
+
+//                playbackspeedButton.hide ();
+
                 video_container.on('canplay', function() {
                    video_container.get(0).play();  /* Automatically play the video once the browser is ready */
                 });
-                if( timeLapse == 1 ) {
-                   //document.getElementById('motioneyePlayer').playbackRate = 8;
-                   vidspeed = 8;
-                   document.getElementById('motioneyePlayer').playbackRate = vidspeed;
-                };
+
+                if (vidspeed != 0) {
+                    motioneyePlayer.playbackRate = vidspeed;
+                    playbackspeedButton.show();
+                    //playbackspeedButton.css('right', '25%');
+                }
             });
 
             playButton.show();
-            timelapseButton.show();
+            autoplayfastButton.show();
+            //autoplayfastButton.show();
 
             playButton.css('left', '55%');
-            timelapseButton.css('left', '45%');
+            //autoplayfastButton.css('left', '35%');
+
         }
 
         img.load(function () {
@@ -3637,6 +3658,7 @@ function runPictureDialog(entries, pos, mediaType) {
                 img.height(height);
                 video_container.width(parseInt(height*aspectRatio)).height(height);
             }
+            
             updateModalDialogPosition();
             prevArrow.css('display', pos < entries.length - 1 ? '' : 'none');
             nextArrow.css('display', pos > 0 ? '' : 'none');
@@ -3739,7 +3761,7 @@ function runPictureDialog(entries, pos, mediaType) {
         onShow: updatePicture,
         onClose: function () {
             $('body').off('keydown', bodyKeyDown);
-            timelapse = 0; 
+            autoplay = 0; 
         }
     });
 }
@@ -4271,6 +4293,8 @@ function runMediaDialog(cameraId, mediaType) {
                     var downloadButton = $('<div class="media-list-download-button button">Download</div>');
                     entryDiv.append(downloadButton);
 
+                    // TODO: Hassel add mark selected or delete by start end time (start/end)
+                    
                     var deleteButton = $('<div class="media-list-delete-button button">Delete</div>');
                     if (isAdmin()) {
                         entryDiv.append(deleteButton);
@@ -4404,6 +4428,9 @@ function runMediaDialog(cameraId, mediaType) {
     if (isAdmin()) {
         var deleteAllButton = $('<div class="media-dialog-button media-dialog-delete-all-button">Delete All</div>');
         buttonsDiv.append(deleteAllButton);
+
+
+        // TODO: Hassel add delete selected or delete by start end time
 
         deleteAllButton.click(function () {
             if (groupKey != null) {
